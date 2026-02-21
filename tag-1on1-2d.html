@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag 1on1 (2D)</title>
+  <style>
+    body { background: #3cb371; color: #fff; margin: 0; }
+    .tag2d-container { display: flex; flex-direction: column; align-items: center; margin-top: 30px; }
+    #tag2dStatus { margin: 12px; font-size: 1.1em; }
+    .tag2d-controls { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="tag2d-container">
+    <h1>Tag 1on1 (2D)</h1>
+    <div id="tag2dStatus">Red: WASD | Blue: Arrows | W/Up = Jump</div>
+    <div class="tag2d-controls">
+      <button onclick="resetTag2DGame()">Reset</button>
+      <a href="welcome.html" style="display:inline-block;margin-left:1em;padding:0.6em 1.2em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+    </div>
+    <canvas id="tag2dCanvas" width="1280" height="720" style="background:#3cb371;border-radius:10px;max-width:98vw;max-height:80vh;" tabindex="0"></canvas>
+    <div id="rolePopup" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10;">
+      <div style="background:#fff;color:#222;padding:2em 3em;border-radius:16px;text-align:center;box-shadow:0 4px 24px #0008;min-width:260px;">
+        <h2>Choose Your Role</h2>
+        <button id="chooseTagger" style="margin:1em;padding:0.8em 2em;font-size:1.2em;background:#e53935;color:#fff;border:none;border-radius:8px;">Tagger</button>
+        <button id="chooseRunner" style="margin:1em;padding:0.8em 2em;font-size:1.2em;background:#43a047;color:#fff;border:none;border-radius:8px;">Runner</button>
+        <div style="margin-top:1em;font-size:1em;">Red: WASD<br>Blue: Arrows</div>
+      </div>
+    </div>
+  </div>
+  <script src="tag-1on1-2d.js"></script>
+</body>
+</html>

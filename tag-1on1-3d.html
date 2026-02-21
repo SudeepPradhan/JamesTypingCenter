@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag 1on1 3D</title>
+  <style>
+    body { background: #222; color: #fff; margin: 0; }
+    .tag3d-container { display: flex; flex-direction: column; align-items: center; margin-top: 30px; }
+    #tag3dStatus { margin: 12px; font-size: 1.1em; }
+    .tag3d-controls { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="tag3d-container">
+    <h1>Tag 1on1 3D</h1>
+    <div id="tag3dStatus">Red: WASD | Blue: Arrows</div>
+    <div class="tag3d-controls">
+      <button onclick="resetTag3DGame()">Reset</button>
+      <a href="welcome.html" style="display:inline-block;margin-left:1em;padding:0.6em 1.2em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+    </div>
+    <div id="tag3dContainer" style="width:600px;height:400px;"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+  <script src="tag-1on1-3d.js"></script>
+</body>
+</html>

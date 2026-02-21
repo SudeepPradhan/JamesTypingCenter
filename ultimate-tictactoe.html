@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ultimate Tic Tac Toe</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .utt-container { max-width: 600px; margin: 2em auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2em; text-align: center; }
+    .utt-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 auto; }
+    .utt-mini-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #e0e6ef; border-radius: 6px; padding: 2px; }
+    .utt-cell { width: 64px; height: 64px; font-size: 2.2em; background: #fff; border: 1px solid #bcdcff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .utt-cell.highlight-x { background: #ffeaea; box-shadow: 0 0 0 2px #e5393555; }
+    .utt-cell.highlight-o { background: #eaf2ff; box-shadow: 0 0 0 2px #1565c055; }
+    .utt-cell.x { color: #e53935; font-weight: bold; }
+    .utt-cell.o { color: #1565c0; font-weight: bold; }
+    .utt-cell.won-x { background: #d0eaff; }
+    .utt-cell.won-o { background: #ffe0e0; }
+    .utt-mini-board.won-x { background: #b3e0ff; }
+    .utt-mini-board.won-o { background: #ffd6d6; }
+    .utt-status { margin: 1em 0; font-size: 1.1em; }
+  </style>
+</head>
+<body>
+  <div class="utt-container">
+    <h1>Ultimate Tic Tac Toe</h1>
+    <div id="uttStatus" class="utt-status"></div>
+    <div id="uttTurnPopup" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;align-items:center;justify-content:center;pointer-events:none;">
+      <div id="uttTurnPopupMsg" style="background:rgba(255,255,255,0.97);padding:1.5em 2.5em;border-radius:18px;box-shadow:0 8px 40px #0004;text-align:center;font-size:2em;font-weight:bold;"></div>
+    </div>
+    <div id="uttBoard" class="utt-board"></div>
+    <button id="uttReset" style="margin-top:1.5em;">Reset Game</button>
+    <div style="text-align:center;margin-top:2em;">
+      <a href="welcome.html" style="display:inline-block;padding:0.7em 1.4em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+    </div>
+  </div>
+  <script src="ultimate-tictactoe.js"></script>
+</body>
+</html>

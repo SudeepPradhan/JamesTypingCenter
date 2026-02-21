@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag 1on1</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tag-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+    #tagGameCanvas {
+      background: #f0f0f0;
+      border: 2px solid #333;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .tag-controls {
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tag-container">
+    <h1>Tag 1on1</h1>
+    <canvas id="tagGameCanvas" width="400" height="400"></canvas>
+    <div class="tag-controls">
+      <button onclick="resetTagGame()">Reset</button>
+      <span id="tagStatus"></span>
+    </div>
+    <a href="welcome.html" style="display:inline-block;margin-top:10px;padding:0.6em 1.2em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+  </div>
+  <script src="tag-1on1.js"></script>
+</body>
+</html>

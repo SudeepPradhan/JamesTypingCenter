@@ -12,6 +12,14 @@ let timerId = null;
 let running = false;
 let sampleRef = '';
 let prevValue = '';
+let wrongLetterCount = 0;
+let accuracyLocked = false;
+let wrongLetterStreak = 0;
+let wrongLetterIndices = [];
+let unlockRequired = false;
+// Track which indices are currently wrong (red)
+let persistentWrongIndices = [];
+let persistentCorrectedIndices = [];
 // baseline average typing speed (words per minute) for a typical adult
 const BASELINE_WPM = 40;
 
@@ -41,32 +49,89 @@ function update(){
 
 
 textarea.addEventListener('input', ()=>{
+  if(accuracyLocked) {
+    textarea.value = prevValue;
+    return;
+  }
   if(!running){
     startTime = Date.now();
     running = true;
     timerId = setInterval(update, 200);
   }
   const cur = textarea.value || '';
-  // Per-character highlighting
+  // Per-character highlighting and color feedback
   if(sampleRef && sampleDisplayEl){
     const spans = sampleDisplayEl.querySelectorAll('span.sample-char');
+    // Remove all highlight classes first
     for(let i = 0; i < sampleRef.length; i++){
-      spans[i]?.classList.remove('flash-red');
+      spans[i]?.classList.remove('flash-red','char-correct','char-corrected');
     }
-    // Only flash the incorrect character
-    if(cur.length > prevValue.length){
-      for(let i = prevValue.length; i < cur.length; i++){
-        const typedChar = cur[i];
-        const refChar = sampleRef[i] || '';
-        if(typedChar !== refChar && spans[i]){
-          spans[i].classList.add('flash-red');
-          setTimeout(()=>{
-            spans[i]?.classList.remove('flash-red');
-          }, 500);
-          break;
-        }
+    // Update persistentWrongIndices and persistentCorrectedIndices for current input
+    for(let i = 0; i < cur.length; i++){
+      const typedChar = cur[i];
+      const refChar = sampleRef[i] || '';
+      if(typedChar !== refChar) {
+        persistentWrongIndices[i] = true;
+        persistentCorrectedIndices[i] = false;
+      } else if(persistentWrongIndices[i]) {
+        // Only mark as corrected if it was previously wrong and now correct
+        persistentWrongIndices[i] = false;
+        persistentCorrectedIndices[i] = true;
+      } else {
+        persistentCorrectedIndices[i] = false;
       }
     }
+    // Mark correct, wrong, and corrected chars
+    for(let i = 0; i < cur.length; i++){
+      const typedChar = cur[i];
+      const refChar = sampleRef[i] || '';
+      if(persistentCorrectedIndices[i] && typedChar === refChar && spans[i]){
+        spans[i].classList.add('char-corrected');
+      } else if(typedChar === refChar && spans[i]){
+        spans[i].classList.add('char-correct');
+      } else if(typedChar !== refChar && spans[i]){
+        spans[i].classList.add('flash-red');
+      }
+    }
+    // Remove highlight for chars after current input
+    for(let i = cur.length; i < sampleRef.length; i++){
+      spans[i]?.classList.remove('flash-red','char-correct','char-corrected');
+      persistentWrongIndices[i] = false;
+      persistentCorrectedIndices[i] = false;
+    }
+  }
+  // Auto-stop if user finished the sample exactly
+  if (sampleRef && cur === sampleRef) {
+    clearInterval(timerId);
+    running = false;
+    textarea.blur();
+    // Update modal message with correct emojis before showing
+    const modal = document.getElementById('statsModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const words = countWords(cur);
+    const nowSec = startTime ? (Date.now() - startTime)/1000 : 0;
+    const wpm = startTime ? Math.round(words / (nowSec/60 || 1)) : 0;
+    if(modalMessage){
+      if(wpm >= BASELINE_WPM + 21){
+        modalMessage.textContent = "WHO LET THIS GUY COOK!?!? 🎉🔥🤯🥳";
+      } else if(wpm >= (BASELINE_WPM + 11) && wpm <= (BASELINE_WPM + 20)){
+        modalMessage.textContent = `Unbelievable, You're Amazing! 🥳🎉`;
+      } else if(wpm >= (BASELINE_WPM + 1) && wpm <= (BASELINE_WPM + 10)){
+        modalMessage.textContent = 'Above Average! 😁👍';
+      } else if(wpm >= (BASELINE_WPM - 9) && wpm <= BASELINE_WPM){
+        modalMessage.textContent = 'Great Now, Better! 🙂👌';
+      } else if(wpm >= (BASELINE_WPM - 19) && wpm <= (BASELINE_WPM - 10)){
+        const diff = Math.max(0, BASELINE_WPM - wpm);
+        modalMessage.textContent = `Dang, Try Again? 😕 — ${diff} WPM below average`;
+      } else if(wpm <= 20 || wpm < BASELINE_WPM){
+        const diff = Math.max(0, BASELINE_WPM - wpm);
+        modalMessage.textContent = `Maybe Next Time 😢 — ${diff} WPM below average`;
+      } else {
+        modalMessage.textContent = '';
+      }
+    }
+    showStatsModal();
+    return;
   }
   update();
   prevValue = cur;
@@ -108,6 +173,11 @@ resetBtn.addEventListener('click', ()=>{
   timeEl.textContent = '0.0';
   wordsEl.textContent = '0';
   textarea.focus();
+  wrongLetterCount = 0;
+  accuracyLocked = false;
+  persistentWrongIndices = [];
+  persistentCorrectedIndices = [];
+  persistentWrongIndices = [];
 });
 
 // Sample paragraphs and selection
@@ -130,6 +200,14 @@ function renderSampleSpans() {
     span.className = 'sample-char';
     span.dataset.index = i;
     sampleDisplayEl.appendChild(span);
+  }
+  // Remove James and Luna from sampleSelect dropdown if present
+  if (sampleSelect) {
+    for (let i = sampleSelect.options.length - 1; i >= 0; i--) {
+      if (sampleSelect.options[i].text.includes('James') || sampleSelect.options[i].text.includes('Luna')) {
+        sampleSelect.remove(i);
+      }
+    }
   }
 }
 const sampleSelect = document.getElementById('sampleSelect');
@@ -223,41 +301,72 @@ function showStatsModal(){
   const modalMessage = document.getElementById('modalMessage');
   if(modalMessage){
     if(wpm >= BASELINE_WPM + 21){
-      modalMessage.textContent = "WHO LET THIS GUY COOK!?!?";
+      modalMessage.textContent = "WHO LET THIS GUY COOK!?!? 🎉🔥🤯🥳";
     } else if(wpm >= (BASELINE_WPM + 11) && wpm <= (BASELINE_WPM + 20)){
-      modalMessage.textContent = `Unbelievable, You're Amazing`;
+      modalMessage.textContent = `Unbelievable, You're Amazing! 🥳🎉`;
     } else if(wpm >= (BASELINE_WPM + 1) && wpm <= (BASELINE_WPM + 10)){
-      modalMessage.textContent = 'Above Average!';
+      modalMessage.textContent = 'Above Average! 😁👍';
     } else if(wpm >= (BASELINE_WPM - 9) && wpm <= BASELINE_WPM){
-      modalMessage.textContent = 'Great Now, Better!';
+      modalMessage.textContent = 'Great Now, Better! 🙂👌';
     } else if(wpm >= (BASELINE_WPM - 19) && wpm <= (BASELINE_WPM - 10)){
       const diff = Math.max(0, BASELINE_WPM - wpm);
-      modalMessage.textContent = `Dang, Try Again? — ${diff} WPM below average`;
+      modalMessage.textContent = `Dang, Try Again? 😕 — ${diff} WPM below average`;
     } else if(wpm <= 20 || wpm < BASELINE_WPM){
       const diff = Math.max(0, BASELINE_WPM - wpm);
-      modalMessage.textContent = `Maybe Next Time — ${diff} WPM below average`;
+      modalMessage.textContent = `Maybe Next Time 😢 — ${diff} WPM below average`;
     } else {
       modalMessage.textContent = '';
     }
   }
 
+  // Remove custom reset if present
+  let customReset = document.getElementById('wpmCustomReset');
+  if (customReset) customReset.remove();
+
+  modal.style.display = 'flex';
   modal.setAttribute('aria-hidden','false');
+  setTimeout(() => { modal.focus(); }, 10);
   return wpm;
 }
 
-// Modal close handlers
-const closeStats = document.getElementById('closeStats');
-const closeBtn = document.getElementById('closeBtn');
-if(closeStats){
-  closeStats.addEventListener('click', ()=>{
-    const m = document.getElementById('statsModal'); if(m) m.setAttribute('aria-hidden','true');
+// Restore close buttons and normal modal behavior
+// Close buttons removed from modal
+// const closeStats = document.getElementById('closeStats');
+// const closeBtn = document.getElementById('closeBtn');
+const resetWpmBtn = document.getElementById('resetWpmBtn');
+function restoreModalRows() {
+  const modal = document.getElementById('statsModal');
+  if(!modal) return;
+  const stats = modal.querySelectorAll('.modal-row');
+  stats.forEach(row => row.style.display = '');
+  modal.style.display = '';
+  accuracyLocked = false;
+  // Remove custom modal if present
+  const customModal = document.getElementById('customAccuracyModal');
+  if(customModal) customModal.remove();
+}
+
+if (resetWpmBtn) {
+  resetWpmBtn.addEventListener('click', function() {
+    // Hide the stats modal immediately
+    const modal = document.getElementById('statsModal');
+    if (modal) {
+      modal.style.display = '';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    clearInterval(timerId);
+    startTime = null;
+    running = false;
+    textarea.value = '';
+    wpmEl.textContent = '0';
+    timeEl.textContent = '0.0';
+    wordsEl.textContent = '0';
+    textarea.focus();
+    wrongLetterCount = 0;
+    accuracyLocked = false;
   });
 }
-if(closeBtn){
-  closeBtn.addEventListener('click', ()=>{
-    const m = document.getElementById('statsModal'); if(m) m.setAttribute('aria-hidden','true');
-  });
-}
+// Close button logic removed
 
 // Confetti generator
 function triggerConfetti(count = 80){
@@ -455,14 +564,66 @@ if(copyLinkBtn){
   });
 }
 
-// Auto-load sample when URL contains ?sample=1
-try{
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('sample') === '1'){
-    const idx = params.get('idx');
-    if(idx !== null) setSample(Number(idx));
-    else setSample(0);
-    loadSample(true);
+// Auto-load sample on DOMContentLoaded
+// Remove auto-load sample on DOMContentLoaded
+
+function showCustomModal(message) {
+  let modal = document.getElementById('customAccuracyModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'customAccuracyModal';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(13, 110, 253, 0.95)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '99999';
+    modal.innerHTML = `
+      <div style="background: #fff; padding: 3em 2em; border-radius: 18px; box-shadow: 0 8px 40px #0004; text-align: center; max-width: 90vw;">
+        <h1 style="color: #0d6efd; font-size: 2.5em; margin-bottom: 0.5em;">Work On Your Accuracy</h1>
+        <p style="font-size: 1.3em; color: #333;">You made too many mistakes.<br>Please click Reset to try again.</p>
+        <button id="customAccuracyReset" style="margin-top:2em;padding:1em 2.5em;font-size:1.2em;background:#0d6efd;color:#fff;border:none;border-radius:8px;cursor:pointer;">Reset</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('customAccuracyReset').onclick = function() {
+      modal.remove();
+      clearInterval(timerId);
+      startTime = null;
+      running = false;
+      textarea.value = '';
+      wpmEl.textContent = '0';
+      timeEl.textContent = '0.0';
+      wordsEl.textContent = '0';
+      textarea.focus();
+      wrongLetterCount = 0;
+      accuracyLocked = false;
+      prevValue = '';
+    };
+  } else {
+    modal.style.display = 'flex';
   }
-}catch(e){/* ignore */}
+}
+
+// Restore modal rows and unlock typing on close
+function restoreModalRows() {
+  const modal = document.getElementById('statsModal');
+  if(!modal) return;
+  const stats = modal.querySelectorAll('.modal-row');
+  stats.forEach(row => row.style.display = '');
+  modal.style.display = '';
+  accuracyLocked = false;
+  // Remove custom modal if present
+  const customModal = document.getElementById('customAccuracyModal');
+  if(customModal) customModal.remove();
+}
+if(closeStats){
+  closeStats.style.display = '';
+  closeStats.addEventListener('click', restoreModalRows);
+}
+
 

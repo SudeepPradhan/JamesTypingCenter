@@ -1,3 +1,20 @@
+/* Typing feedback colors */
+.char-correct {
+  background: #3cb371 !important;
+  color: #fff !important;
+  border-radius: 3px;
+  transition: background 0.1s, color 0.1s;
+}
+.char-corrected {
+  background: #ffe066 !important;
+  color: #333 !important;
+  border-radius: 3px;
+  transition: background 0.1s, color 0.1s;
+}
+body {
+  background: linear-gradient(180deg, #0d6efd, #4aa3ff);
+}
+
 .char-flash{position:absolute;pointer-events:none;background:#ff3b3b;border-radius:3px;opacity:0.95;z-index:9999;transition:opacity 0.5s ease-out}
 #sampleDisplay {
 	font-family: monospace;
@@ -6,22 +23,12 @@
 	user-select: none;
 	word-break: break-all;
 }
-#sampleDisplay span {
-	transition: background 0.2s;
-	padding: 2px 1px;
-	border-radius: 3px;
+.sample-char {
+  display: inline;
+  white-space: pre;
+  vertical-align: baseline;
+  font-family: Arial, Helvetica, sans-serif !important;
 }
-.flash-red {
-	background: #ff3b3b;
-	color: #fff;
-	transition: background 0.2s;
-}
-*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial, sans-serif}
-body{margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(180deg,#0d6efd,#4aa3ff)}
-.container{width:min(900px,92vw);background:white;padding:24px;border-radius:10px;box-shadow:0 6px 20px rgba(20,30,60,0.08)}
-h1{margin:0 0 8px;font-size:1.6rem}
-.instructions{margin:0 0 16px;color:#555}
-.stats{display:flex;gap:18px;margin-bottom:12px;font-weight:600}
 #input,textarea, #input{width:100%}
 textarea{height:220px;padding:12px;border:1px solid #e0e6ef;border-radius:6px;font-size:1rem;resize:vertical}
 .controls{display:flex;gap:8px;margin-top:12px}
@@ -33,6 +40,10 @@ button#reset{background:#eef7ff;border-color:#bcdcff}
 .sample{background:#fbfdff;border:1px solid #eef6ff;padding:12px;border-radius:8px;margin-bottom:12px}
 .sample h2{margin:0 0 6px;font-size:1rem}
 .sample-controls{display:flex;gap:8px;margin-top:8px}
+.word-group {
+  display: inline-block;
+  white-space: nowrap;
+}
 
 /* Modal styles */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,12,20,0.45);z-index:1200}
@@ -59,6 +70,43 @@ button#reset{background:#eef7ff;border-color:#bcdcff}
 .error-overlay{position:fixed;inset:0;background:#ff3b3b;opacity:0.9;pointer-events:none;z-index:9998;animation:errorFade 0.5s ease-out forwards}
 @keyframes errorFade{0%{opacity:0.9}100%{opacity:0}}
 .char-flash{position:absolute;pointer-events:none;background:#ff3b3b;border-radius:3px;opacity:0.95;z-index:9999;transition:opacity 0.5s ease-out}
+
+/* Leaderboard styles */
+.leaderboard {
+  margin-left: 2em;
+  min-width: 220px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1em;
+}
+.leaderboard h2 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.leaderboard th, .leaderboard td {
+  text-align: center;
+  padding: 0.3em 0.5em;
+  border-bottom: 1px solid #ddd;
+}
+.leaderboard tr:last-child td {
+  border-bottom: none;
+}
+.leaderboard .up { color: green; }
+.leaderboard .down { color: red; }
+
+.flash-red {
+  background: #ff3b3b !important;
+  color: #fff !important;
+  border-radius: 3px;
+  box-shadow: 0 0 8px 2px #ff3b3b;
+  transition: background 0.1s, color 0.1s;
+  z-index: 10;
+}
 
 
 

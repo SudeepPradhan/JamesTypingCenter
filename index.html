@@ -25,6 +25,7 @@
           <option value="1">Typing practice</option>
           <option value="2">Lorem ipsum</option>
           <option value="3">Technology blurb</option>
+          <option value="4">James With No Phone</option>
         </select>
         <button id="refreshSample">Refresh</button>
         <button id="loadSample">Load Sample</button>
@@ -38,11 +39,22 @@
       <button id="stop">Stop</button>
       <button id="reset">Reset</button>
     </div>
+    <div style="text-align:center;margin-top:2em;">
+      <a href="welcome.html" style="display:inline-block;padding:0.7em 1.4em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+      <ul>
+        <li><a href="typingcenter.html">Typing Center</a></li>
+        <li><a href="hangman.html">Hangman</a></li>
+        <li><a href="ultimate-tictactoe.html">Ultimate Tic Tac Toe</a></li>
+        <li><a href="balldrop.html">MergeToPlay</a></li>
+        <li><a href="sliding-puzzle.html">Sliding Puzzle</a></li>
+      </ul>
+    </div>
   </div>
+  <!-- Leaderboard removed -->
   <!-- Stats modal -->
   <div id="statsModal" class="modal" aria-hidden="true">
     <div class="modal-content">
-      <button id="closeStats" class="modal-close">×</button>
+      <!-- Close button removed -->
       <h3>Typing Stats</h3>
       <div class="modal-row">WPM: <strong id="modalWpm">0</strong></div>
       <div class="modal-row">Accuracy: <strong id="modalAccuracy">N/A</strong></div>
@@ -52,7 +64,8 @@
       <div class="modal-row">Time: <strong id="modalTime">0.0s</strong></div>
       <div class="modal-row">Words: <strong id="modalWords">0</strong></div>
       <div class="modal-actions">
-        <button id="closeBtn">Close</button>
+        <!-- Close button removed -->
+        <button id="resetWpmBtn">Reset and Try Again</button>
       </div>
     </div>
   </div>

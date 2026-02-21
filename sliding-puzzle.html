@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sliding Puzzle</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .sliding-puzzle-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+    .sliding-puzzle-board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 4px;
+      background: #333;
+      padding: 6px;
+      border-radius: 10px;
+    }
+    .puzzle-tile {
+      width: 80px;
+      height: 80px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 6px;
+      background-size: 240px 240px;
+      background-repeat: no-repeat;
+      transition: background 0.2s;
+    }
+    .puzzle-tile.empty {
+      background: #222;
+      cursor: default;
+    }
+    .sliding-puzzle-controls {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sliding-puzzle-container">
+    <h1>Sliding Puzzle</h1>
+    <div style="margin-bottom: 16px;">
+      <a href="welcome.html" style="display:inline-block;margin-bottom:12px;padding:0.6em 1.2em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a><br>
+      <label for="puzzleDifficulty">Difficulty: </label>
+      <select id="puzzleDifficulty" onchange="changeDifficulty()">
+        <option value="2">Easy (2x2)</option>
+        <option value="3" selected>Medium (3x3)</option>
+        <option value="4">Hard (4x4)</option>
+      </select>
+    </div>
+    <div id="slidingPuzzleBoard" class="sliding-puzzle-board"></div>
+    <div class="sliding-puzzle-controls">
+      <button onclick="resetPuzzle()">Reset</button>
+      <span id="slidingPuzzleStatus"></span>
+    </div>
+  </div>
+  <script src="sliding-puzzle.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hangman Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hangman-container { max-width: 400px; margin: 2em auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2em; text-align: center; }
+    .hangman-word { font-size: 2em; letter-spacing: 0.3em; margin-bottom: 1em; }
+    .hangman-letters button { margin: 0.2em; font-size: 1.1em; }
+    .hangman-status { margin: 1em 0; font-size: 1.1em; }
+    .hangman-reset { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <div id="hangmanLossPopup" style="display:none;position:fixed;z-index:9999;inset:0;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;">
+    <div style="background:#181818;padding:2.5em 2em 2em 2em;border-radius:16px;box-shadow:0 8px 40px #000a;text-align:center;max-width:90vw;">
+      <h1 style="color:#b30000;font-size:2.5em;margin-bottom:0.5em;">You Lost</h1>
+      <div id="hangmanLossAnswer" style="color:#fff;font-size:1.3em;margin-bottom:1.2em;"></div>
+      <button id="hangmanLossReset" style="padding:0.7em 1.4em;background:#fff;color:#b30000;border-radius:6px;border:none;font-size:1.1em;cursor:pointer;">Try Again</button>
+    </div>
+  </div>
+  <div id="hangmanWinPopup" style="display:none;position:fixed;z-index:9999;inset:0;background:#0d6efd;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="background:rgba(13,110,253,0.98);padding:2.5em 2em 2em 2em;border-radius:16px;box-shadow:0 8px 40px #000a;text-align:center;max-width:90vw;">
+      <h1 style="color:#fff;font-size:2.7em;margin-bottom:0.5em;text-shadow:0 2px 8px #003366;">Congratulations</h1>
+      <div id="hangmanWinAnswer" style="color:#fff;font-size:1.3em;margin-bottom:1.2em;"></div>
+      <button id="hangmanWinReset" style="padding:0.7em 1.4em;background:#fff;color:#0d6efd;border-radius:6px;border:none;font-size:1.1em;cursor:pointer;">Play Again</button>
+    </div>
+  </div>
+  <div class="hangman-container">
+    <h1>Hangman Game</h1>
+    <div style="margin-bottom:1em;">
+      <button class="hangman-category" data-category="animals">Animals</button>
+      <button class="hangman-category" data-category="school">School</button>
+      <button class="hangman-category" data-category="food">Food</button>
+    </div>
+    <canvas id="hangmanCanvas" width="180" height="220" style="display:block;margin:0 auto 1em auto;"></canvas>
+    <div id="hangmanWord" class="hangman-word"></div>
+    <div id="hangmanStatus" class="hangman-status"></div>
+    <div id="hangmanLetters" class="hangman-letters"></div>
+    <button id="hangmanReset" class="hangman-reset">Reset Game</button>
+    <div style="text-align:center;margin-top:2em;">
+      <a href="welcome.html" style="display:inline-block;padding:0.7em 1.4em;background:#0d6efd;color:#fff;border-radius:6px;text-decoration:none;font-size:1em;">Back to Welcome Center</a>
+    </div>
+  </div>
+  <script src="hangman.js"></script>
+</body>
+</html>
