@@ -43,7 +43,65 @@ function renderBoard() {
       cell.onclick = () => handleMove(m, c);
       mini.appendChild(cell);
     }
+    // Add winner icon overlay if mini-board is won
+    if (mainBoard[m] === 1 || mainBoard[m] === 2) {
+      const winnerIcon = document.createElement('div');
+      winnerIcon.className = 'utt-winner-icon';
+      winnerIcon.textContent = mainBoard[m] === 1 ? 'X' : 'O';
+      winnerIcon.style.color = mainBoard[m] === 1 ? '#e53935' : '#1565c0';
+      winnerIcon.style.fontSize = '4em';
+      winnerIcon.style.width = '80%';
+      winnerIcon.style.height = '80%';
+      winnerIcon.style.top = '50%';
+      winnerIcon.style.left = '50%';
+      winnerIcon.style.transform = 'translate(-50%, -50%)';
+      mini.appendChild(winnerIcon);
+      // Draw a line through the three connected cells in the mini-board
+      const lines = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      let winningLine = null;
+      for (const line of lines) {
+        if (line.every(i => miniBoards[m][i] === mainBoard[m])) {
+          winningLine = line;
+          break;
+        }
+      }
+      if (winningLine) {
+        const miniLine = document.createElement('div');
+        miniLine.className = 'utt-mini-win-line';
+        miniLine.dataset.line = winningLine.join('-');
+        miniLine.style.background = mainBoard[m] === 1 ? '#e53935' : '#1565c0';
+        mini.appendChild(miniLine);
+      }
+    }
     uttBoardEl.appendChild(mini);
+  }
+  // Draw a line through the three connected mini-boards if someone wins
+  if (gameOver && checkWin(mainBoard, currentPlayer)) {
+    const winLines = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    let winningLine = null;
+    for (const line of winLines) {
+      if (line.every(i => mainBoard[i] === currentPlayer)) {
+        winningLine = line;
+        break;
+      }
+    }
+    if (winningLine) {
+      const lineEl = document.createElement('div');
+      lineEl.className = 'utt-win-line';
+      lineEl.dataset.line = winningLine.join('-');
+      lineEl.style.background = currentPlayer === 1 ? '#e53935' : '#1565c0';
+      uttBoardEl.appendChild(lineEl);
+      // Position the line using CSS grid overlay
+      // (CSS will handle the placement)
+    }
   }
 }
 
